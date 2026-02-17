@@ -12,10 +12,11 @@ test('First playwright test', async ({ browser }) => {
       const checkbox = page.locator('input[type="checkbox"]');
       const signInBtn = page.locator('input#signInBtn');
       const MobileNameTitle = page.locator('.card-body a');
+      
       await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
-
       console.log(await page.title());
       await expect(page).toHaveTitle("LoginPage Practise | Rahul Shetty Academy");
+      await expect(page.locator("[href*='documents-request']")).toHaveAttribute('class', 'blinkingText');
       await username.fill("rahulshettyacademy");
       await password.fill("@830$3mK2");
       await checkbox.click();
@@ -31,6 +32,36 @@ test('First playwright test', async ({ browser }) => {
         const allMobileNameTitles = await MobileNameTitle.allTextContents();
         console.log(allMobileNameTitles);
       await page.screenshot({ path: 'HomeScreenpage.png', fullPage: true });
+
+});
+
+test.only('child window test', async ({ browser }) => {
+      const context = await browser.newContext();
+      const page = await context.newPage();
+      await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
+       await expect(page).toHaveTitle("LoginPage Practise | Rahul Shetty Academy");
+      const documentlink = page.locator("[href*='documents-request']");
+      const username = page.locator('input#username');
+      console.log(await page.title());
+ 
+      const [newPage]= await Promise.all([
+      context.waitForEvent('page'),
+       documentlink.click(),
+
+      ])
+
+     const text = await newPage.locator(".red").textContent();
+     console.log(text);
+     const arrayText = text.split("@")
+     const Domainemailid = arrayText[1].split(" ")[0];
+     console.log(Domainemailid);
+     newPage.close();
+
+    await page.locator('#username').fill(Domainemailid);
+    await page.pause();
+      console.log(await page.locator('#username').inputValue());
+
+      //await page.pause();
 
 });
 

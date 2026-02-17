@@ -16,7 +16,7 @@ test.only('Login Screen UI', async ({ page }) => {
         const cartTitle = page.locator('.card-body b');
         await page.goto("https://rahulshettyacademy.com/client/#/auth/login");
         await expect(page).toHaveTitle("Let's Shop");
-       await page.screenshot({ path: '../Screenshot/LoginScreen.png', fullPage: true });
+        await page.screenshot({ path: '../Screenshot/LoginScreen.png', fullPage: true });
         // await RegisterHere.click();
         // await firstname.fill("test");
         // await lastname.fill("test");
@@ -32,11 +32,12 @@ test.only('Login Screen UI', async ({ page }) => {
         await email.fill("test1234@gmail.com");
         await password.fill("Test@123");
         await loginBtn.click();
+        await page.waitForLoadState('networkidle');
         await page.screenshot({ path: '../Screenshot/HomeScreen1.png', fullPage: true });
         console.log(await cartTitle.first().textContent());
         console.log(await cartTitle.nth(1).textContent());
-        const cartTitlefirst = page.locator('.card-body button i').nth(1).click();
-       //console.log(await cartTitle.allTextContents());
+       // const cartTitl = page.locator('.card-body b');
+        console.log(await cartTitle.allTextContents());
 
 
 
