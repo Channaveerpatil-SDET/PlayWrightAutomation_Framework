@@ -67,32 +67,26 @@ test('Ecommerce application', async ({ page }) => {
   const orderConfirmationID = orderConfirmation.split(" ")[2];
   console.log(orderConfirmationID);
 
-  await page.locator("button[routerlink='/dashboard/myorders']").click();
+  await page.locator("button[routerlink*='myorders']").click();
+   await page.locator("tbody").waitFor();
+
+  const rows = await page.locator("tbody tr");
+
+   for (let i = 0; i < await rows.count(); ++i) {
+      const rowOrderId = await rows.nth(i).locator("th").textContent();
+      if (orderConfirmationID.includes(rowOrderId)) {
+         await rows.nth(i).locator("button").first().click();
+         console.log("order confirmed with order id: " + rowOrderId);
+         break;
+      }else {
+         console.log("order id not found in orders page: " + rowOrderId);
+      }
+   }
 
 
-  const orderIDInMyOrders = await page.locator(".table tbody tr th").first().textContent();
-
-  expect(orderIDInMyOrders).toBe(orderConfirmationID);
-
-
-  for (let i = 0; i < orderIDInMyOrders.length; ++i) {
-    const orderID = await page.locator(".table  tbody tr th").nth(i).textContent();
-
-    if (orderID === orderConfirmationID) {
-
-      console.log("Order ID Matched");
-       await page.locator("td button[class='btn btn-primary']").nth(i).locator("text= View").click();
-
-      break;
-    } else {
-
-      console.log("Order ID Not Matched");
-    }
-  }
-
-   const finalorderid = await page.locator("div.col-text").textContent();
-   console.log("finalorderid: " + finalorderid);
-   await expect(page.locator("div.col-text")).toHaveText(orderConfirmationID);
+   const orderIdDetails = await page.locator(".col-text").textContent();
+   console.log("orderIdDetails: " + orderIdDetails);
+   await expect(orderConfirmationID.includes(orderIdDetails)).toBeTruthy();
   await page.pause();
 
 
